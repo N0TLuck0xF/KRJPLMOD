@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formal Language Theory for KRJPLMod</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 20px;
+      color: #333;
+    }
+    h1, h2, h3 {
+      color: #2c3e50;
+    }
+    strong {
+      color: #2980b9;
+    }
+    code {
+      background-color: #f4f4f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: "Courier New", monospace;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    pre code {
+      background-color: transparent;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Formal Language Theory for KRJPLMod</h1>
+
+  <h2>1. Introduction</h2>
+  <p><strong>KRJPLMod</strong> is a <strong>statically-typed, high-performance programming language</strong> designed for <strong>secure, concurrent, and memory-safe applications</strong>. This document outlines its <strong>formal language theory</strong>, including its <strong>syntax, semantics, and grammar</strong>.</p>
+
+  <hr>
+
+  <h2>2. Alphabet & Symbols</h2>
+  <p><strong>KRJPLMod</strong> consists of the following fundamental character set:</p>
+  <ul>
+    <li><strong>Letters</strong>: <code>A-Z, a-z</code></li>
+    <li><strong>Digits</strong>: <code>0-9</code></li>
+    <li><strong>Special Characters</strong>: <code>{ } ( ) [ ] ; , . : + - * / % = < > ! & | ^ ~</code></li>
+    <li><strong>Whitespace</strong>: <code>space, tab, newline</code></li>
+    <li><strong>String Delimiters</strong>: <code>" "</code> (double quotes)</li>
+    <li><strong>Comment Symbols</strong>: <code>//</code> (single-line), <code>/* */</code> (multi-line)</li>
+  </ul>
+
+  <hr>
+
+  <h2>3. Lexical Structure</h2>
+  <h3>3.1 Tokens</h3>
+  <p><strong>KRJPLMod</strong> uses the following token types:</p>
+  <ul>
+    <li><strong>Keywords</strong>: <code>func, let, var, const, if, else, while, for, return, true, false, async, await, actor, message, struct, enum</code></li>
+    <li><strong>Identifiers</strong>: <code>[a-zA-Z_][a-zA-Z0-9_]*</code></li>
+    <li><strong>Literals</strong>: <code>Integer (42)</code>, <code>Float (3.14)</code>, <code>Boolean (true, false)</code>, <code>String ("Hello")</code></li>
+    <li><strong>Operators</strong>: <code>+, -, *, /, %, ==, !=, <, >, <=, >=, &&, ||, !</code></li>
+    <li><strong>Separators</strong>: <code>{ } ( ) [ ] , ;</code></li>
+  </ul>
+
+  <hr>
+
+  <h2>4. Grammar & Syntax Rules (BNF Notation)</h2>
+  <h3>4.1 Program Structure</h3>
+  <pre><code>&lt;program&gt; ::= &lt;statement&gt; | &lt;statement&gt; &lt;program&gt;
+&lt;statement&gt; ::= &lt;variable_declaration&gt; | &lt;function_definition&gt; | &lt;expression&gt; | &lt;control_flow&gt;</code></pre>
+
+  <h3>4.2 Variable Declarations</h3>
+  <pre><code>&lt;variable_declaration&gt; ::= "let" &lt;identifier&gt; "=" &lt;expression&gt; ";"
+&lt;variable_declaration&gt; ::= "const" &lt;identifier&gt; "=" &lt;expression&gt; ";"</code></pre>
+
+  <h3>4.3 Function Definitions</h3>
+  <pre><code>&lt;function_definition&gt; ::= "func" &lt;identifier&gt; "(" &lt;parameter_list&gt; ")" "{" &lt;statement_list&gt; "}"
+&lt;parameter_list&gt; ::= &lt;identifier&gt; | &lt;identifier&gt; "," &lt;parameter_list&gt;</code></pre>
+
+  <h3>4.4 Expressions</h3>
+  <pre><code>&lt;expression&gt; ::= &lt;identifier&gt; | &lt;literal&gt; | &lt;binary_expression&gt; | &lt;function_call&gt;
+&lt;binary_expression&gt; ::= &lt;expression&gt; &lt;operator&gt; &lt;expression&gt;
+&lt;function_call&gt; ::= &lt;identifier&gt; "(" &lt;argument_list&gt; ")"</code></pre>
+
+  <h3>4.5 Control Flow</h3>
+  <pre><code>&lt;control_flow&gt; ::= "if" "(" &lt;expression&gt; ")" "{" &lt;statement_list&gt; "}"
+               | "if" "(" &lt;expression&gt; ")" "{" &lt;statement_list&gt; "}" "else" "{" &lt;statement_list&gt; "}"
+               | "while" "(" &lt;expression&gt; ")" "{" &lt;statement_list&gt; "}"
+               | "for" "(" &lt;variable_declaration&gt; &lt;expression&gt; ";" &lt;expression&gt; ")" "{" &lt;statement_list&gt; "}"</code></pre>
+
+  <hr>
+
+  <h2>5. Type System</h2>
+  <p><strong>KRJPLMod</strong> features a <strong>statically-typed system</strong> with the following types:</p>
+  <ul>
+    <li><strong>Primitive Types</strong>: <code>int, float, bool, string</code></li>
+    <li><strong>Composite Types</strong>: <code>Vector&lt;T&gt;, HashMap&lt;K, V&gt;</code></li>
+    <li><strong>User-Defined Types</strong>: <code>structs, enums</code></li>
+    <li><strong>Function Types</strong>: <code>func(T) -&gt; T</code></li>
+    <li><strong>Effect Types</strong>: <code>@pure, @async, @transactional</code></li>
+  </ul>
+  <p>Type checking is performed at <strong>compile time</strong>, with optional dynamic typing via <code>dynamic</code>.</p>
+
+  <hr>
+
+  <h2>6. Operational Semantics</h2>
+  <p><strong>KRJPLMod</strong> follows <strong>small-step operational semantics</strong>:</p>
+  <ol>
+    <li><strong>Variable evaluation</strong>: <code>let x = 5;</code> evaluates to <code>(x, 5)</code> in the environment.</li>
+    <li><strong>Function application</strong>: <code>f(a, b)</code> reduces to the function body with arguments substituted.</li>
+    <li><strong>Control flow</strong>: <code>if (true) { A } else { B }</code> evaluates to <code>A</code>.</li>
+    <li><strong>Concurrency</strong>: <code>spawn Task()</code> creates a new execution context.</li>
+  </ol>
+
+  <hr>
+
+  <h2>7. Parsing Strategy</h2>
+  <p><strong>KRJPLMod</strong> uses a <strong>recursive descent parser</strong> with operator precedence parsing for expressions. The parser follows:</p>
+  <ul>
+    <li><strong>Top-down approach</strong></li>
+    <li><strong>LL(1) grammar</strong></li>
+    <li><strong>AST construction</strong> for semantic analysis</li>
+  </ul>
+
+  <hr>
+
+  <h2>Conclusion</h2>
+  <p>This document defines the <strong>formal language theory</strong> of <strong>KRJPLMod</strong>, covering its <strong>syntax, semantics, and type system</strong>. This structured approach ensures <strong>predictable and efficient program execution</strong> while maintaining <strong>safety and performance guarantees</strong>.</p>
+
+</body>
+</html>
