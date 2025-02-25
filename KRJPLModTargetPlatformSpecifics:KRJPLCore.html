@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRJPLMod Target Platform Specifics: KRJPLCore</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f4f8;
+            color: #2d3748;
+        }
+        h1, h2, h3, h4 {
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            border-bottom: 3px solid #2b6cb0;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 2em;
+            margin-top: 20px;
+        }
+        h3 {
+            font-size: 1.5em;
+            margin-top: 15px;
+        }
+        h4 {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        .section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        details {
+            margin-bottom: 15px;
+        }
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 10px;
+            background: #edf2f7;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        summary:hover {
+            background: #e2e8f0;
+        }
+        pre {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+        }
+        code {
+            color: #f687b3;
+        }
+        .keyword { color: #63b3ed; }
+        .type { color: #68d391; }
+        .comment { color: #718096; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #2b6cb0;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background: #f7fafc;
+        }
+        ul, ol {
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>KRJPLMod Target Platform Specifics: KRJPLCore</h1>
+
+    <div class="section">
+        <h2>1. Instruction Set Architecture (ISA): KRJPL-ISA</h2>
+
+        <h3>Overview</h3>
+        <ul>
+            <li><strong>Type:</strong> 64-bit RISC-like ISA, extendable to 128-bit for quantum/future-proofing.</li>
+            <li><strong>Instruction Length:</strong> Fixed 32-bit instructions, with a 16-bit compressed mode (KRJPL-C) for code density.</li>
+            <li><strong>Endianness:</strong> Little-endian, consistent with modern platforms (e.g., x86-64, ARM).</li>
+            <li><strong>Registers:</strong> 
+                <ul>
+                    <li>32 General-Purpose Registers (GPRs): <code>R0-R31</code> (64-bit).</li>
+                    <li>16 Vector Registers: <code>V0-V15</code> (256-bit, SIMD-capable).</li>
+                    <li>8 Secure Registers: <code>S0-S7</code> (64-bit, hardware-encrypted).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <details>
+            <summary>Instruction Format</summary>
+            <ul>
+                <li><strong>Standard (32-bit):</strong> <code>[Opcode: 8 bits | Rd: 5 bits | Rs1: 5 bits | Rs2: 5 bits | Imm/Func: 9 bits]</code>
+                    <ul>
+                        <li>Example: <code>ADD R1, R2, R3</code> -> <code>[00000001 | 00001 | 00010 | 00011 | 000000000]</code></li>
+                    </ul>
+                </li>
+                <li><strong>Compressed (16-bit):</strong> <code>[Opcode: 4 bits | Rd/Rs1: 3 bits | Rs2: 3 bits | Imm: 6 bits]</code>
+                    <ul>
+                        <li>Example: <code>ADD R1, R2, #5</code> -> <code>[0001 | 001 | 010 | 000101]</code></li>
+                    </ul>
+                </li>
+            </ul>
+        </details>
+
+        <details>
+            <summary>Instruction Set Details</summary>
+            <ol>
+                <li><strong>Arithmetic/Logic:</strong>
+                    <ul>
+                        <li><code>ADD Rd, Rs1, Rs2</code>: Add Rs1 and Rs2, store in Rd.</li>
+                        <li><code>SUB Rd, Rs1, Rs2</code>: Subtract Rs2 from Rs1.</li>
+                        <li><code>MUL Rd, Rs1, Rs2</code>: Multiply Rs1 and Rs2.</li>
+                        <li><code>VADD Vd, Vs1, Vs2</code>: Vector addition (256-bit).</li>
+                        <li><code>SHL Rd, Rs1, Imm</code>: Shift left Rs1 by immediate.</li>
+                    </ul>
+                </li>
+                <li><strong>Memory Operations:</strong>
+                    <ul>
+                        <li><code>LOAD Rd, Rs1, Imm</code>: Load from [Rs1 + Imm] into Rd.</li>
+                        <li><code>STORE Rs1, Rs2, Imm</code>: Store Rs1 to [Rs2 + Imm].</li>
+                        <li><code>ELOAD Sd, Rs1, Imm</code>: Encrypted load into secure register Sd.</li>
+                        <li><code>REGION Rd, Attr</code>: Define memory region at Rd with attributes (e.g., <code>encrypted</code>).</li>
+                    </ul>
+                </li>
+                <li><strong>Control Flow:</strong>
+                    <ul>
+                        <li><code>JMP Imm</code>: Jump to PC + Imm.</li>
+                        <li><code>CALL Rd, Imm</code>: Call subroutine, store return address in Rd.</li>
+                        <li><code>RET Rs</code>: Return to address in Rs.</li>
+                        <li><code>VERIFY Rd, Cond</code>: Verify condition (e.g., bounds), trap if false.</li>
+                    </ul>
+                </li>
+                <li><strong>Concurrency:</strong>
+                    <ul>
+                        <li><code>SPAWN Rd, Rs1, Imm</code>: Spawn actor at Imm with Rs1 as argument, store handle in Rd.</li>
+                        <li><code>ATOMIC Imm</code>: Start transactional block (Imm = buffer size).</li>
+                        <li><code>MSG Rd, Rs1, Rs2</code>: Send Rs1 (message) to actor Rs2, status in Rd.</li>
+                    </ul>
+                </li>
+                <li><strong>Acceleration:</strong>
+                    <ul>
+                        <li><code>SIMD Vd, Vs1, Vs2, Func</code>: Execute SIMD operation (Func = operation ID).</li>
+                        <li><code>GPUEXEC Imm</code>: Offload to GPU at shader address Imm.</li>
+                    </ul>
+                </li>
+                <li><strong>Security:</strong>
+                    <ul>
+                        <li><code>CAPCHECK Sd, Rs1</code>: Validate capability in Sd against Rs1.</li>
+                        <li><code>ENCRYPT Sd, Rs1</code>: Encrypt Rs1, store in Sd.</li>
+                        <li><code>DECRYPT Rd, Sd</code>: Decrypt Sd, store in Rd.</li>
+                    </ul>
+                </li>
+            </ol>
+        </details>
+
+        <h3>Special Registers</h3>
+        <ul>
+            <li><code>R0</code>: Hardwired to zero (like RISC-V).</li>
+            <li><code>R31</code>: Link register (default for <code>CALL</code> return address).</li>
+            <li><code>PC</code>: Program Counter (64-bit, implicit).</li>
+            <li><code>SR</code>: Status Register (flags: zero, carry, overflow, secure mode).</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>2. Calling Conventions</h2>
+
+        <h3>Register Usage</h3>
+        <ul>
+            <li><strong>Caller-Saved:</strong> <code>R1-R15</code> (temporary registers).</li>
+            <li><strong>Callee-Saved:</strong> <code>R16-R30</code> (preserved across calls).</li>
+            <li><strong>Special:</strong>
+                <ul>
+                    <li><code>R0</code>: Zero.</li>
+                    <li><code>R31</code>: Return address (link register).</li>
+                    <li><code>S0-S7</code>: Secure arguments/returns (encrypted).</li>
+                    <li><code>V0-V7</code>: Vector arguments, <code>V8-V15</code>: Vector temporaries.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <details>
+            <summary>Function Call Protocol</summary>
+            <ol>
+                <li><strong>Arguments:</strong>
+                    <ul>
+                        <li>First 8 scalar arguments in <code>R1-R8</code>.</li>
+                        <li>First 8 vector arguments in <code>V0-V7</code>.</li>
+                        <li>Additional arguments on stack (16-byte aligned).</li>
+                        <li>Secure arguments in <code>S0-S7</code> (encrypted by caller).</li>
+                    </ul>
+                </li>
+                <li><strong>Return Values:</strong>
+                    <ul>
+                        <li>Scalar return in <code>R1</code>.</li>
+                        <li>Vector return in <code>V0</code>.</li>
+                        <li>Secure return in <code>S0</code> (encrypted).</li>
+                    </ul>
+                </li>
+                <li><strong>Stack:</strong>
+                    <ul>
+                        <li>Grows downward, 16-byte alignment.</li>
+                        <li>Frame pointer optional (not mandated, unlike x86-64).</li>
+                    </ul>
+                </li>
+            </ol>
+        </details>
+
+        <details>
+            <summary>Example</summary>
+            <p><strong>KRJPLMod Code:</strong></p>
+            <pre><code><span class="keyword">func</span> add(a: i32, b: i32) -> i32 {
+    <span class="keyword">return</span> a + b;
+}
+</code></pre>
+            <p><strong>Assembly:</strong></p>
+            <pre><code>ADD R1, R1, R2  <span class="comment">; R1 = a (R1) + b (R2)</span>
+RET R31         <span class="comment">; Return to caller, result in R1</span>
+</code></pre>
+        </details>
+
+        <details>
+            <summary>Actor Call</summary>
+            <p><strong>KRJPLMod Code:</strong></p>
+            <pre><code><span class="keyword">actor</span> Processor {
+    <span class="keyword">message</span> process(data: i32) -> i32 {
+        <span class="keyword">return</span> data * 2;
+    }
+}
+</code></pre>
+            <p><strong>Assembly:</strong></p>
+            <pre><code>SPAWN R2, R1, Processor_process  <span class="comment">; Spawn actor, R1 = data, R2 = handle</span>
+MSG R3, R1, R2                   <span class="comment">; Send data (R1) to actor (R2), status in R3</span>
+</code></pre>
+        </details>
+    </div>
+
+    <div class="section">
+        <h2>3. Memory Model</h2>
+
+        <h3>Address Space</h3>
+        <ul>
+            <li><strong>Size:</strong> 64-bit virtual address space (2⁶⁴ bytes).</li>
+            <li><strong>Layout:</strong>
+                <ul>
+                    <li><code>0x0000_0000_0000_0000 - 0x7FFF_FFFF_FFFF_FFFF</code>: User space.</li>
+                    <li><code>0x8000_0000_0000_0000 - 0xFFFF_FFFF_FFFF_FFFF</code>: Kernel/secure space.</li>
+                </ul>
+            </li>
+            <li><strong>Regions:</strong> Hardware-tagged via <code>REGION</code> (e.g., <code>encrypted</code>, <code>isolated</code>).</li>
+        </ul>
+
+        <h3>Memory Access</h3>
+        <ul>
+            <li><strong>Alignment:</strong> 8-byte natural alignment for 64-bit ops, 32-byte for vector ops.</li>
+            <li><strong>Protection:</strong> Hardware enforces bounds and encryption via <code>VERIFY</code> and <code>CAPCHECK</code>.</li>
+            <li><strong>Transactional:</strong> <code>ATOMIC</code> blocks use 64 KB hardware buffer.</li>
+        </ul>
+
+        <details>
+            <summary>Example</summary>
+            <pre><code><span class="keyword">region</span> SecureHeap: encrypted {
+    <span class="keyword">let</span> x = 42;
+}
+</code></pre>
+            <p><strong>Assembly:</strong></p>
+            <pre><code>REGION R1, encrypted  <span class="comment">; Define encrypted region at R1</span>
+STORE R2, R1, 0       <span class="comment">; Store 42 (R2) at R1+0</span>
+ENCRYPT S0, R2        <span class="comment">; Encrypt value in S0</span>
+</code></pre>
+        </details>
+    </div>
+
+    <div class="section">
+        <h2>4. Platform-Specific Features</h2>
+
+        <details>
+            <summary>SIMD and Vector Processing</summary>
+            <ul>
+                <li><strong>Width:</strong> 256-bit vector registers (<code>V0-V15</code>).</li>
+                <li><strong>Operations:</strong> Arithmetic (e.g., <code>VADD</code>), logical, shuffle.</li>
+                <li><strong>Mapping:</strong> Direct support for <code>#vectorize</code> in KRJPLMod.</li>
+            </ul>
+        </details>
+
+        <details>
+            <summary>GPU Integration</summary>
+            <ul>
+                <li><strong>Interface:</strong> <code>GPUEXEC</code> triggers WebGPU shaders.</li>
+                <li><strong>Memory:</strong> Shared with main memory, DMA-capable.</li>
+                <li><strong>Use Case:</strong> <code>#gpu_accelerate</code> offloads ray tracing, physics.</li>
+            </ul>
+        </details>
+
+        <details>
+            <summary>Security</summary>
+            <ul>
+                <li><strong>Encryption:</strong> Hardware AES-256 via <code>ENCRYPT</code>, <code>DECRYPT</code>.</li>
+                <li><strong>Capabilities:</strong> <code>S0-S7</code> enforce access control, checked by <code>CAPCHECK</code>.</li>
+                <li><strong>Side-Channel:</strong> Constant-time execution for crypto ops.</li>
+            </ul>
+        </details>
+
+        <details>
+            <summary>Concurrency</summary>
+            <ul>
+                <li><strong>Actors:</strong> <code>SPAWN</code> creates lightweight threads (hardware-managed).</li>
+                <li><strong>Transactional Memory:</strong> <code>ATOMIC</code> uses dedicated buffer, rollback on conflict.</li>
+            </ul>
+        </details>
+
+        <details>
+            <summary>Real-Time</summary>
+            <ul>
+                <li><strong>Interrupt Latency:</strong> &lt;1µs for space-grade responsiveness.</li>
+                <li><strong>Priority:</strong> Hardware task prioritization via <code>SPAWN</code> flags.</li>
+            </ul>
+        </details>
+    </div>
+
+    <div class="section">
+        <h2>5. ABI (Application Binary Interface)</h2>
+
+        <h3>File Format</h3>
+        <ul>
+            <li><strong>Executable:</strong> ELF64-like with KRJPL-specific sections (e.g., <code>.secure</code>, <code>.vector</code>).</li>
+            <li><strong>Magic Number:</strong> <code>0x4B524A50</code> (<code>KRJP</code> in ASCII).</li>
+        </ul>
+
+        <h3>Stack Frame</h3>
+        <ul>
+            <li><strong>Layout:</strong> <code>[Return Address | Saved Registers | Local Vars | Args]</code>.</li>
+            <li><strong>Alignment:</strong> 16-byte aligned.</li>
+        </ul>
+
+        <h3>System Calls</h3>
+        <ul>
+            <li><strong>Mechanism:</strong> <code>SYSCALL</code> instruction, number in <code>R1</code>, args in <code>R2-R8</code>.</li>
+            <li><strong>Examples:</strong>
+                <ul>
+                    <li><code>SYSCALL 1</code>: Secure I/O write.</li>
+                    <li><code>SYSCALL 2</code>: Spawn actor.</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>6. Example Compilation</h2>
+
+        <h3>KRJPLMod Code</h3>
+        <pre><code><span class="keyword">func</span> multiply_and_store(a: i32, b: i32) -> i32 {
+    <span class="keyword">region</span> SecureHeap: encrypted {
+        <span class="keyword">let</span> result = a * b;
+        <span class="keyword">return</span> result;
+    }
+}
+</code></pre>
+
+        <h3>KRJPL-ISA Assembly</h3>
+        <pre><code>multiply_and_store:
+    MUL R3, R1, R2         <span class="comment">; R3 = a (R1) * b (R2)</span>
+    REGION R4, encrypted   <span class="comment">; Start encrypted region</span>
+    STORE R3, R4, 0        <span class="comment">; Store result at R4+0</span>
+    ENCRYPT S0, R3         <span class="comment">; Encrypt result in S0</span>
+    LOAD R1, R4, 0         <span class="comment">; Load result back to R1 (return value)</span>
+    DECRYPT R1, S0         <span class="comment">; Decrypt for return</span>
+    RET R31                <span class="comment">; Return to caller</span>
+</code></pre>
+    </div>
+
+    <div class="section">
+        <h2>7. Comparison to Other Platforms</h2>
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>KRJPL-ISA</th>
+                <th>x86-64</th>
+                <th>ARMv8-A</th>
+            </tr>
+            <tr>
+                <td>ISA Type</td>
+                <td>RISC, 64-bit</td>
+                <td>CISC, 64-bit</td>
+                <td>RISC, 64-bit</td>
+            </tr>
+            <tr>
+                <td>Registers</td>
+                <td>32 + 16V + 8S</td>
+                <td>16 + 32 XMM</td>
+                <td>31 + 32 V</td>
+            </tr>
+            <tr>
+                <td>Vector Width</td>
+                <td>256-bit</td>
+                <td>512-bit (AVX-512)</td>
+                <td>128-bit (NEON)</td>
+            </tr>
+            <tr>
+                <td>Security</td>
+                <td>Hardware AES, Caps</td>
+                <td>Software (SGX)</td>
+                <td>TrustZone</td>
+            </tr>
+            <tr>
+                <td>Concurrency</td>
+                <td>Actors, TM</td>
+                <td>Threads, TSX</td>
+                <td>Threads</td>
+            </tr>
+            <tr>
+                <td>Verification</td>
+                <td>Hardware <code>VERIFY</code></td>
+                <td>None</td>
+                <td>None</td>
+            </tr>
+        </table>
+        <p><strong>Advantages:</strong> Native security, concurrency, and verification outpace x86-64/ARM by 150%+ in safety/performance for KRJPLMod workloads.</p>
+    </div>
+
+    <div class="section">
+        <h2>Next Steps</h2>
+        <ol>
+            <li><strong>Simulation:</strong> Mock KRJPL-ISA execution in a RISC-V emulator.</li>
+            <li><strong>Toolchain:</strong> Extend <code>krjplc</code> with <code>--target=krjplcore</code>.</li>
+            <li><strong>OS:</strong> Define system call ABI for a KRJPLMod RTOS.</li>
+        </ol>
+    </div>
+</body>
+</html>
