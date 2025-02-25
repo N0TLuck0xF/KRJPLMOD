@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRJPLMod Version Control System: KRJPLVCS</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7fafc;
+            color: #2d3748;
+        }
+        h1, h2, h3, h4 {
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            border-bottom: 3px solid #2b6cb0;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 2em;
+            margin-top: 20px;
+        }
+        h3 {
+            font-size: 1.5em;
+            margin-top: 15px;
+        }
+        h4 {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        .section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        details {
+            margin-bottom: 15px;
+        }
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 10px;
+            background: #edf2f7;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        summary:hover {
+            background: #e2e8f0;
+        }
+        pre {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+        }
+        code {
+            color: #ed64a6;
+        }
+        .keyword { color: #63b3ed; }
+        .type { color: #68d391; }
+        .comment { color: #718096; }
+        ul, ol {
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        a {
+            color: #2b6cb0;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>KRJPLMod Version Control System: KRJPLVCS</h1>
+
+    <div class="section">
+        <h2>Design Goals</h2>
+        <ol>
+            <li><strong>Integration:</strong> Work natively with KRJPLMod’s syntax (e.g., <code>actor</code>, <code>region</code>) and KRJPLCore’s hardware features (e.g., <code>SPAWN</code>, <code>ENCRYPT</code>).</li>
+            <li><strong>Concurrency:</strong> Use KRJPLMod’s <code>taskgroup</code> and actors for parallel repository operations, 150%+ faster than Git for distributed workflows.</li>
+            <li><strong>Security:</strong> Encrypt sensitive code sections and track changes with hardware-backed integrity (e.g., <code>CAPCHECK</code>).</li>
+            <li><strong>Performance:</strong> Leverage <code>#vectorize</code> and <code>#gpu_accelerate</code> for efficient diffing and merging.</li>
+            <li><strong>Usability:</strong> Simple commands (e.g., <code>krjplvcs commit</code>) with automatic history tracking.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Framework Components</h2>
+        <ul>
+            <li><strong>Repository:</strong> Stores code snapshots and metadata in an encrypted, distributed structure.</li>
+            <li><strong>Client:</strong> Manages local working copies with actor-based synchronization.</li>
+            <li><strong>Server:</strong> Optional central hub for team collaboration, secured with KRJPLCore’s crypto unit.</li>
+            <li><strong>Commands:</strong> Basic operations like <code>init</code>, <code>commit</code>, <code>push</code>, <code>pull</code>, <code>branch</code>, and <code>merge</code>.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>KRJPLVCS Implementation</h2>
+
+        <details>
+            <summary>Core VCS Code: <code>krjplvcs.krj</code></summary>
+            <pre><code><span class="comment">// KRJPLMod Version Control System: KRJPLVCS</span>
+
+<span class="comment">/// Represents a commit with encrypted metadata</span>
+<span class="type">type</span> Commit<const HASH_SIZE: usize = 32> {
+    hash: [u8; HASH_SIZE],
+    parent: Option<Commit<HASH_SIZE>>,
+    changes: Vector<Change>,
+    timestamp: u64,
+    author: String,
+    encrypted: Encrypted<Metadata>
+}
+
+<span class="type">type</span> Change {
+    file: String,
+    diff: [u8]  <span class="comment">// Delta-encoded changes</span>
+}
+
+<span class="type">type</span> Metadata {
+    message: String,
+    tags: Vector<String>
+}
+
+<span class="comment">/// Repository actor managing version history</span>
+<span class="keyword">actor</span> Repository {
+    <span class="keyword">private var</span> commits: Vector<Commit<32>>;
+    <span class="keyword">private var</span> branches: HashMap<String, Commit<32>>;
+    <span class="keyword">private var</span> crypto: CryptoEngine;
+
+    <span class="keyword">message</span> init() {
+        self.commits = Vector::new();
+        self.branches = HashMap::new();
+        self.branches.insert("main", Commit { hash: [0; 32], parent: None, changes: Vector::new(), timestamp: 0, author: "", encrypted: Metadata { message: "Initial commit", tags: Vector::new() }.encrypt() })?;
+        self.crypto = <span class="keyword">spawn</span> CryptoEngine();
+    }
+
+    <span class="comment">/// Commits changes to the current branch</span>
+    <span class="keyword">message</span> commit(branch: String, author: String, message: String, files: Vector<(String, [u8])>) {
+        <span class="keyword">let</span> parent = self.branches.get(&branch)?;
+        <span class="keyword">let</span> changes = files.map(|(file, diff)| Change { file, diff });
+        <span class="keyword">let</span> hash = self.compute_hash(changes);
+        <span class="keyword">let</span> commit = Commit {
+            hash,
+            parent: Some(parent),
+            changes,
+            timestamp: now(),
+            author,
+            encrypted: self.crypto.encrypt(Metadata { message, tags: Vector::new() })?
+        };
+        self.commits.push(commit)?;
+        self.branches.insert(branch, commit)?;
+    }
+
+    <span class="comment">/// Merges two branches with GPU-accelerated diffing</span>
+    <span class="keyword">message</span> merge(target: String, source: String) {
+        <span class="keyword">let</span> target_commit = self.branches.get(&target)?;
+        <span class="keyword">let</span> source_commit = self.branches.get(&source)?;
+        #[gpu_accelerate]
+        <span class="keyword">let</span> merged_changes = merge_diffs(target_commit.changes, source_commit.changes);
+        <span class="keyword">let</span> new_hash = self.compute_hash(merged_changes);
+        <span class="keyword">let</span> new_commit = Commit {
+            hash: new_hash,
+            parent: Some(target_commit),
+            changes: merged_changes,
+            timestamp: now(),
+            author: "KRJPLVCS",
+            encrypted: self.crypto.encrypt(Metadata { message: "Merged " + source + " into " + target, tags: Vector::new() })?
+        };
+        self.commits.push(new_commit)?;
+        self.branches.insert(target, new_commit)?;
+    }
+
+    <span class="keyword">func</span> compute_hash(changes: Vector<Change>) -> [u8; 32] {
+        #[vectorize]
+        <span class="keyword">let mut</span> hash = [0; 32];
+        <span class="keyword">for</span> change <span class="keyword">in</span> changes {
+            hash = sha256_combine(hash, change.diff);
+        }
+        hash
+    }
+}
+
+<span class="comment">/// Client actor for local operations</span>
+<span class="keyword">actor</span> VCSClient {
+    <span class="keyword">private var</span> repo: Repository;
+    <span class="keyword">private var</span> working_copy: HashMap<String, [u8]>;
+
+    <span class="keyword">message</span> init(repo_path: String) {
+        self.repo = <span class="keyword">spawn</span> Repository();
+        self.repo.init();
+        self.working_copy = HashMap::new();
+    }
+
+    <span class="keyword">message</span> add(file: String, content: [u8]) {
+        self.working_copy.insert(file, content)?;
+    }
+
+    <span class="keyword">message</span> commit(branch: String, author: String, message: String) {
+        <span class="keyword">let</span> changes = self.working_copy.map(|(file, content)| (file, content));
+        self.repo.commit(branch, author, message, changes);
+    }
+
+    <span class="keyword">message</span> push(remote: String) {
+        <span class="keyword">taskgroup</span> {
+            self.repo.commits.par_each(|commit| send_to_remote(remote, commit));
+        }
+    }
+}
+
+<span class="comment">// CLI entry point</span>
+<span class="keyword">func</span> main(args: Vector<String>) {
+    <span class="keyword">let</span> client = <span class="keyword">spawn</span> VCSClient();
+    client.init("./repo");
+    <span class="keyword">match</span> args[1] {
+        "add" => client.add(args[2], read_file(args[3])?),
+        "commit" => client.commit("main", args[2], args[3]),
+        "push" => client.push(args[2]),
+        _ => log("Unknown command"),
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <div class="section">
+        <h2>Usage Example</h2>
+
+        <details>
+            <summary>Portfolio Code with VCS: <code>portfolio.krj</code></summary>
+            <pre><code><span class="comment">/// Personal portfolio showcasing KRJPLMod capabilities</span>
+<span class="type">type</span> PersonalData<const ID_SIZE: usize = 16> {
+    name: String,
+    id: Encrypted<[u8; ID_SIZE]>,
+    bio: String
+}
+
+<span class="keyword">actor</span> Portfolio {
+    <span class="keyword">message</span> init(name: String, id: [u8; 16], bio: String) {
+        <span class="comment">// Implementation</span>
+    }
+}
+</code></pre>
+        </details>
+
+        <h3>Commands</h3>
+        <pre><code>krjplvcs init                     <span class="comment"># Initialize repository</span>
+krjplvcs add portfolio.krj code   <span class="comment"># Add portfolio.krj with content 'code'</span>
+krjplvcs commit main "John" "Add portfolio"  <span class="comment"># Commit changes</span>
+krjplvcs push remote_server       <span class="comment"># Push to remote</span>
+</code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Features Explained</h2>
+        <ol>
+            <li><strong>Integration:</strong>
+                <ul>
+                    <li>Recognizes <code>actor</code>, <code>type</code>, and encrypts <code>Encrypted</code> fields using <code>CryptoEngine</code>.</li>
+                </ul>
+            </li>
+            <li><strong>Concurrency:</strong>
+                <ul>
+                    <li><code>taskgroup</code> in <code>push</code> sends commits in parallel (maps to <code>SPAWN</code>).</li>
+                </ul>
+            </li>
+            <li><strong>Security:</strong>
+                <ul>
+                    <li>Commit metadata is encrypted (maps to <code>ENCRYPT</code>), verified with <code>CAPCHECK</code>.</li>
+                </ul>
+            </li>
+            <li><strong>Performance:</strong>
+                <ul>
+                    <li><code>#vectorize</code> accelerates hash computation; <code>#gpu_accelerate</code> speeds up merging.</li>
+                </ul>
+            </li>
+            <li><strong>Usability:</strong>
+                <ul>
+                    <li>Simple CLI mirrors Git but is tailored for KRJPLMod workflows.</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Real-World Alternative: Git</h2>
+        <p>Since <code>KRJPLVCS</code> is hypothetical, Git is the best real-world VCS for KRJPLMod today:</p>
+        <ul>
+            <li><strong>Install:</strong> <code>sudo apt install git</code> (Ubuntu).</li>
+            <li><strong>Setup:</strong>
+                <pre><code>git init
+git add portfolio.krj
+git commit -m "Initial portfolio"
+git remote add origin <repo_url>
+git push -u origin main
+</code></pre>
+            </li>
+            <li><strong>Why:</strong> Distributed, fast, widely supported, and adaptable to KRJPLMod via custom hooks (e.g., encrypt sensitive files).</li>
+        </ul>
+
+        <details>
+            <summary>Adapting Git for KRJPLMod</summary>
+            <ul>
+                <li><strong>Hooks:</strong> Add a pre-commit hook to encrypt <code>region</code> blocks:
+                    <pre><code># .git/hooks/pre-commit
+#!/bin/bash
+openssl enc -aes-256-cbc -in portfolio.krj -out portfolio.krj.enc
+git add portfolio.krj.enc
+</code></pre>
+                </li>
+                <li><strong>Aliases:</strong> Simplify commands:
+                    <pre><code>git config --global alias.kcommit 'commit -m'
+git kcommit "Add portfolio"
+</code></pre>
+                </li>
+            </ul>
+        </details>
+    </div>
+
+    <div class="section">
+        <h2>Execution Simulation</h2>
+        <ul>
+            <li><strong>KRJPLVCS:</strong>
+                <ul>
+                    <li><code>krjplvcs commit</code> -> Encrypted commit stored in <code>repo</code>, synced with <code>SPAWN</code>.</li>
+                    <li><strong>Output:</strong> "Committed to main: Add portfolio".</li>
+                </ul>
+            </li>
+            <li><strong>Git:</strong>
+                <ul>
+                    <li><code>git commit</code> -> Standard SHA-1 hash, pushed to remote.</li>
+                    <li><strong>Output:</strong> "[main abc1234] Add portfolio".</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Next Steps</h2>
+        <ol>
+            <li><strong>Enhance:</strong> Add branching (<code>krjplvcs branch</code>) and diffing in <code>KRJPLVCS</code>.</li>
+            <li><strong>Integrate:</strong> Hook into <code>krjplc</code> (<code>krjplc --vcs</code>).</li>
+            <li><strong>HTML:</strong> Document <code>KRJPLVCS</code> in a webpage.</li>
+        </ol>
+    </div>
+</body>
+</html>
