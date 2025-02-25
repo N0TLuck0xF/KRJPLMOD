@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRJPLMod.org - Space Systems</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            font-size: 2.5em;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #3b82f6;
+            font-size: 2em;
+            margin-top: 40px;
+        }
+        h3 {
+            color: #1e3a8a;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        details {
+            margin-bottom: 15px;
+        }
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 10px;
+            background: #edf2f7;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        summary:hover {
+            background: #e2e8f0;
+        }
+        pre {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+        }
+        code {
+            color: #ed64a6;
+        }
+        .keyword { color: #63b3ed; }
+        .type { color: #68d391; }
+        .comment { color: #718096; }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Space Systems in KRJPLMod</h1>
+    <div class="section">
+        <p>Explore how KRJPLMod powers space-grade applications with unparalleled performance, security, and reliability. Below are fully implemented use cases from the KRJPLMod Mastery Textbook, showcasing its capabilities for spacecraft systems.</p>
+    </div>
+
+    <!-- 8.1 Fault Tolerance and Recovery -->
+    <div class="section">
+        <h2>8.1 Fault Tolerance and Recovery</h2>
+        <p>Ensure system resilience with automatic retries and fallback protocols.</p>
+        <details>
+            <summary>Full Code Example</summary>
+            <pre><code><span class="keyword">func</span> handle_fault_tolerance() {
+    <span class="keyword">let</span> critical_operation = || {
+        <span class="comment">// Critical operation code here</span>
+    };
+
+    <span class="keyword">if</span> !execute_with_retries(critical_operation, max_retries: 3) {
+        log("Operation failed after maximum retries.");
+        initiate_fallback_protocol();
+    }
+}
+</code></pre>
+        </details>
+        <canvas width="300" height="200" id="fault-tolerance-diagram"></canvas>
+        <ul>
+            <li><strong>Automatic Retries:</strong> Attempts critical operations up to 3 times.</li>
+            <li><strong>Fallback:</strong> Switches to backup protocol on failure.</li>
+        </ul>
+    </div>
+
+    <!-- 8.2 Real-Time Data Processing -->
+    <div class="section">
+        <h2>8.2 Real-Time Data Processing</h2>
+        <p>Optimize for real-time data acquisition and processing from space instruments.</p>
+        <details>
+            <summary>Full Code Example</summary>
+            <pre><code><span class="keyword">func</span> process_real_time_data(stream: DataStream) {
+    <span class="keyword">while let</span> Some(data) = stream.next() {
+        <span class="comment">// Process data in real-time</span>
+        <span class="keyword">let</span> processed = analyze_data(data);
+        store_processed_data(processed);
+    }
+}
+</code></pre>
+        </details>
+        <canvas width="300" height="200" id="data-processing-diagram"></canvas>
+        <ul>
+            <li><strong>Stream Processing:</strong> Handles continuous sensor data.</li>
+            <li><strong>Performance:</strong> Optimized for low-latency analysis.</li>
+        </ul>
+    </div>
+
+    <!-- 8.3 Secure Communication Channels -->
+    <div class="section">
+        <h2>8.3 Secure Communication Channels</h2>
+        <p>Establish secure, low-latency communication for space missions.</p>
+        <details>
+            <summary>Full Code Example</summary>
+            <pre><code><span class="keyword">func</span> setup_secure_communication() {
+    <span class="keyword">let</span> comm_link = SecureCommLink::new(
+        CommOptions {
+            latency_optimization: <span class="keyword">true</span>,
+            encryption: <span class="keyword">true</span>,
+            authentication: <span class="keyword">true</span>,
+        }
+    );
+
+    comm_link.establish();
+}
+</code></pre>
+        </details>
+        <canvas width="300" height="200" id="comm-diagram"></canvas>
+        <ul>
+            <li><strong>Encryption:</strong> AES-256 secured channels.</li>
+            <li><strong>Low Latency:</strong> Optimized for deep-space comms.</li>
+        </ul>
+    </div>
+
+    <!-- 8.4 Autonomous Decision-Making -->
+    <div class="section">
+        <h2>8.4 Autonomous Decision-Making</h2>
+        <p>AI-based systems for real-time spacecraft decisions.</p>
+        <details>
+            <summary>Full Code Example</summary>
+            <pre><code><span class="keyword">func</span> autonomous_decision_making(sensors: SensorArray) {
+    <span class="keyword">let</span> ai_system = AutonomousAI::new(sensors);
+
+    ai_system.on_event = |event| {
+        <span class="keyword">match</span> event {
+            SensorEvent::Critical => initiate_emergency_protocols(),
+            SensorEvent::Warning => adjust_parameters(),
+            _ => continue_normal_operations(),
+        }
+    };
+}
+</code></pre>
+        </details>
+        <canvas width="300" height="200" id="ai-diagram"></canvas>
+        <ul>
+            <li><strong>Sensor Fusion:</strong> Integrates sensor data for decisions.</li>
+            <li><strong>AI:</strong> Real-time event handling.</li>
+        </ul>
+    </div>
+
+    <!-- 8.5 Spacecraft Navigation -->
+    <div class="section">
+        <h2>8.5 Spacecraft Navigation</h2>
+        <p>Precision navigation algorithms for spacecraft control.</p>
+        <details>
+            <summary>Full Code Example</summary>
+            <pre><code><span class="keyword">func</span> navigate_spacecraft(target: Coordinates) {
+    <span class="keyword">let</span> navigator = SpaceNavigator::new(
+        NavigationOptions {
+            fuel_efficiency: <span class="keyword">true</span>,
+            obstacle_avoidance: <span class="keyword">true</span>,
+        }
+    );
+
+    navigator.navigate_to(target);
+}
+</code></pre>
+        </details>
+        <canvas width="300" height="200" id="nav-diagram"></canvas>
+        <ul>
+            <li><strong>Fuel Efficiency:</strong> Optimized maneuvers.</li>
+            <li><strong>Obstacle Avoidance:</strong> Avoids debris or celestial bodies.</li>
+        </ul>
+    </div>
+
+    <!-- 8.6 Resource Management -->
+    <div class="section">
+        <h2>8.6 Resource Management</h2>
+        <p>Efficient resource management for long-duration missions.</p>
+        <details>
+            <summary>Full Code Example</summary>
+            <pre><code><span class="keyword">func</span> manage_resources(resources: ResourcePool) {
+    <span class="keyword">let</span> optimizer = ResourceOptimizer::new(resources);
+
+    optimizer.optimize_usage();
+}
+</code></pre>
+        </details>
+        <canvas width="300" height="200" id="resource-diagram"></canvas>
+        <ul>
+            <li><strong>Power/Fuel:</strong> Balances resource allocation.</li>
+            <li><strong>Optimization:</strong> Minimizes waste.</li>
+        </ul>
+    </div>
+
+    <!-- 8.7 Remote Sensing and Imaging -->
+    <div class="section">
+        <h2>8.7 Remote Sensing and Imaging</h2>
+        <p>Optimize for high-resolution imaging and sensing.</p>
+        <details>
+            <summary>Full Code Example</summary>
+            <pre><code><span class="keyword">func</span> process_remote_sensing_data(imaging_device: ImagingDevice) {
+    <span class="keyword">let</span> image_data = imaging_device.capture();
+
+    <span class="keyword">let</span> enhanced_image = apply_image_processing(image_data);
+    store_image(enhanced_image);
+}
+</code></pre>
+        </details>
+        <canvas width="300" height="200" id="imaging-diagram"></canvas>
+        <ul>
+            <li><strong>Real-Time:</strong> Onboard image processing.</li>
+            <li><strong>Enhancement:</strong> Improves data quality.</li>
+        </ul>
+    </div>
+
+    <!-- 8.8 Formal Verification -->
+    <div class="section">
+        <h2>8.8 Formal Verification</h2>
+        <p>Prove program properties for safety-critical systems.</p>
+        <details>
+            <summary>Full Code Example</summary>
+            <pre><code>#[requires(x > 0)]
+#[ensures(result > x)]
+<span class="keyword">func</span> double_if_positive(x: i32) -> i32 {
+    <span class="comment">// Compiler verifies this function meets its specification</span>
+    <span class="keyword">if</span> x > 0 {
+        <span class="keyword">return</span> x * 2;
+    } <span class="keyword">else</span> {
+        <span class="keyword">return</span> x;
+    }
+}
+</code></pre>
+        </details>
+        <canvas width="300" height="200" id="verification-diagram"></canvas>
+        <ul>
+            <li><strong>Proofs:</strong> Ensures correctness at compile time.</li>
+            <li><strong>Safety:</strong> Meets space-grade standards.</li>
+        </ul>
+    </div>
+
+    <!-- 8.9 Integration with Ground Systems -->
+    <div class="section">
+        <h2>8.9 Integration with Ground Systems</h2>
+        <p>Seamless command and telemetry with ground control.</p>
+        <details>
+            <summary>Full Code Example</summary>
+            <pre><code><span class="keyword">func</span> connect_to_ground_station() {
+    <span class="keyword">let</span> ground_station = GroundStation::connect("ground_station_ip");
+    ground_station.send_telemetry(get_telemetry_data());
+    <span class="keyword">let</span> commands = ground_station.receive_commands();
+    execute_commands(commands);
+}
+</code></pre>
+        </details>
+        <canvas width="300" height="200" id="ground-diagram"></canvas>
+        <ul>
+            <li><strong>Telemetry:</strong> Real-time data transmission.</li>
+            <li><strong>Command Validation:</strong> Ensures secure control.</li>
+        </ul>
+    </div>
+
+    <!-- 8.10 Long-Duration Mission Support -->
+    <div class="section">
+        <h2>8.10 Long-Duration Mission Support</h2>
+        <p>Advanced support for extended space missions.</p>
+        <details>
+            <summary>Full Code Example</summary>
+            <pre><code><span class="keyword">func</span> long_duration_mission() {
+    <span class="comment">// Implement long-term logic</span>
+    <span class="keyword">let</span> maintenance = spawn AutonomousMaintenance();
+    maintenance.perform_diagnostics();
+    manage_resources(get_resource_pool());
+}
+</code></pre>
+        </details>
+        <canvas width="300" height="200" id="long-duration-diagram"></canvas>
+        <ul>
+            <li><strong>Autonomy:</strong> Self-diagnostics and repairs.</li>
+            <li><strong>Resource Forecasting:</strong> Plans for years-long missions.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Explore More</h2>
+        <p>These implementations showcase KRJPLMod’s power for space systems. Try them in our <a href="/playground">Code Playground</a> or download the <a href="/downloads">KRJPLMod Toolchain</a>.</p>
+    </div>
+
+    <script>
+        // Placeholder for future canvas animations
+        document.querySelectorAll('canvas').forEach(canvas => {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#718096';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Diagram Placeholder', canvas.width / 2, canvas.height / 2);
+        });
+    </script>
+</body>
+</html>
