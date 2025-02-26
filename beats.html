@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beat Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .beat-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .beat {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+        }
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .buy-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #ff6600;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .buy-btn:hover {
+            background: #ff4500;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🔥 Digital Beat Store 🔥</h1>
+    <p>Listen and purchase high-quality beats instantly!</p>
+
+    <div class="beat-container">
+        <div class="beat">
+            <h3>Trap Beat #1</h3>
+            <audio controls>
+                <source src="beats/trap1.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <a href="buy/trap1.html" class="buy-btn">Buy Now</a>
+        </div>
+
+        <div class="beat">
+            <h3>Lo-Fi Chill</h3>
+            <audio controls>
+                <source src="beats/lofi.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <a href="buy/lofi.html" class="buy-btn">Buy Now</a>
+        </div>
+
+        <div class="beat">
+            <h3>Hard Drill Beat</h3>
+            <audio controls>
+                <source src="beats/drill.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <a href="buy/drill.html" class="buy-btn">Buy Now</a>
+        </div>
+    </div>
+
+</body>
+</html>
