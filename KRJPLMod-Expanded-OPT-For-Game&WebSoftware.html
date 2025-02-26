@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRJPLMod Language Specification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #dcdcdc;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>KRJPLMod: Fully Expanded Syntax Specification</h1>
+    
+    <h2>Introduction</h2>
+    <p>KRJPLMod is a next-generation programming language designed for game development, web development, and general software engineering.</p>
+    
+    <h2>1. Core Syntax</h2>
+    <h3>Modules and Imports</h3>
+    <pre><code>module Game;
+import Physics;
+import Graphics;
+import Input;</code></pre>
+    
+    <h3>Type System</h3>
+    <pre><code>type Integer = Int32;
+type Float = Float64;
+type Boolean = Bool;
+type String = Text;</code></pre>
+    
+    <h3>Variables and Constants</h3>
+    <pre><code>let speed: Float = 10.5;
+const MAX_PLAYERS: Integer = 4;</code></pre>
+    
+    <h3>Control Structures</h3>
+    <pre><code>if (player.health > 0) {
+    player.move_forward();
+} else {
+    player.respawn();
+}
+
+for (i in 0..10) {
+    console.log("Iteration: " + i);
+}
+
+while (enemy.alive) {
+    enemy.attack(player);
+}</code></pre>
+    
+    <h3>Functions</h3>
+    <pre><code>function calculate_damage(base: Float, multiplier: Float) -> Float {
+    return base * multiplier;
+}</code></pre>
+    
+    <h3>Classes and Objects</h3>
+    <pre><code>class Player {
+    var health: Integer = 100;
+    var position: Vector3;
+    
+    function move(direction: Vector3) {
+        self.position += direction;
+    }
+}</code></pre>
+    
+    <h2>2. Game Development Extensions</h2>
+    <h3>Entities and Components</h3>
+    <pre><code>entity Enemy {
+    component Health;
+    component AI;
+    component Render;
+}</code></pre>
+    
+    <h3>Physics</h3>
+    <pre><code>physics RigidBody {
+    mass: Float;
+    velocity: Vector3;
+}</code></pre>
+    
+    <h3>Rendering</h3>
+    <pre><code>render Sprite {
+    texture: String;
+    size: Vector2;
+}</code></pre>
+    
+    <h2>3. Web Development Extensions</h2>
+    <h3>UI Components</h3>
+    <pre><code>component Button {
+    text: String;
+    onClick: function;
+}</code></pre>
+    
+    <h3>State Management</h3>
+    <pre><code>state UserState {
+    username: String;
+    loggedIn: Boolean;
+}</code></pre>
+    
+    <h2>4. Software Development Features</h2>
+    <h3>File Handling</h3>
+    <pre><code>file logFile = open("log.txt", "w");
+logFile.write("Game started");
+logFile.close();</code></pre>
+    
+    <h3>Networking</h3>
+    <pre><code>socket server = create_server(8080);
+server.on_receive(data) {
+    console.log("Received: " + data);
+}</code></pre>
+    
+    <h2>Conclusion</h2>
+    <p>This fully built-out syntax provides all necessary structures for developing high-performance games, web applications, and software.</p>
+</body>
+</html>
