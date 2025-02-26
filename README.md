@@ -16,7 +16,7 @@ Donate in Bitcoin (BTC):
 
 You can find access to my BTC address on:
 
-My Website: N0TLUCK0xF.github.io
+My Website: https://N0TLUCK0xF.github.io
 
 My Keybase Profile: https://keybase.io/gitfunded
 
