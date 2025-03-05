@@ -1,7 +1,7 @@
-# KRJPLMod - The Future of Programming
+# Payola - The Future of Programming
 
 ## Introduction
-KRJPLMod is a cutting-edge programming language designed for **unparalleled performance, security, and adaptability**. It seamlessly integrates **web development, blockchain, AI, space systems, military-grade applications, and cloud computing**, making it superior to any other language in the industry. Whether you're building decentralized applications, cloud services, or mission-critical defense systems, KRJPLMod provides a powerful and efficient development environment.
+Payola is a cutting-edge programming language designed for **unparalleled performance, security, and adaptability**. It seamlessly integrates **web development, blockchain, AI, space systems, military-grade applications, and cloud computing**, making it superior to any other language in the industry. Whether you're building decentralized applications, cloud services, or mission-critical defense systems, KRJPLMod provides a powerful and efficient development environment.
 
 ## Features
 - **Full-Stack Web Development** – Create interactive websites and applications with built-in DOM manipulation and CSS-like styling.
